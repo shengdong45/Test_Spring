@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 注意依赖注入一定要有相应的构造函数!-->
+
+    <!--注入有序集合List-->
+    <bean id="listBean" class="com.shengdong.ListTestBean">
+        <property name="values">
+            <list>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
+            </list>
+        </property>
+    </bean>
+
+    <!--注入无序集合Set-->
+    <bean id="setBean" class="com.shengdong.CollectionTestBean">
+        <property name="values">
+            <set>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
+            </set>
+        </property>
+    </bean>
+
+    <!-- 定义依赖Bean ，确保HelloApi中有空构造函数，因为此处没有设置参数值!-->
+    <bean id="helloApi" class="com.shengdong.HelloApi">
+        <constructor-arg index="0" value="This is test for DI!"/>
+        <constructor-arg index="1" value="1"/>
+        <property name="index" value="3"/>
+        <property name="message"><null/></property>
+    </bean>
+
+    <!-- 通过构造器注入 -->
+    <bean id="bean1" class="com.shengdong.HelloApiDecorator">
+        <!-- 注入HelloApiDecorator依赖的Bean HelloApi，即引用Bean-->
+        <!-- 注意此处标签的样式,开始即结束-->
+        <constructor-arg index="0" ref="helloApi"/>
+    </bean>
+
+    <!-- 通过Setter注入 -->
+    <bean id="bean2" class="com.shengdong.HelloApiDecorator">
+        <!-- 注入HelloApiDecorator依赖的Bean HelloApi，即引用Bean-->
+        <property name="helloApi">
+            <ref bean="helloApi"/>
+        </property>
+    </bean>
+
+    <bean id="helloApi1" class="com.shengdong.HelloApi">
+        <constructor-arg index="0" value="This is test for local and parent!"/>
+        <constructor-arg index="1" value="2"/>
+        <property name="index" value="3"/>
+        <property name="message" value="Hello Local!"/>
+    </bean>
+
+    <!--内部Bean-->
+    <bean id="bean" class="com.shengdong.HelloApiDecorator">
+        <property name="helloApi">
+            <bean id="helloApi" class="com.shengdong.HelloApi"/>
+        </property>
+    </bean>
+
+    <!--&lt;!&ndash; 通过parent注入 &ndash;&gt;-->
+    <!--<bean id="bean22" class="com.shengdong.HelloApiDecorator">-->
+        <!--<property name="helloApi">-->
+            <!--<ref parent="helloApi"/>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash;循环依赖就是循环引用，就是两个或多个Bean相互之间的持有对方&ndash;&gt;-->
+    <!--<bean id="circleA" class="com.shengdong.CircleA">-->
+    <!--<constructor-arg index="0" ref="circleB"/>-->
+    <!--</bean>-->
+    <!--<bean id="circleB" class="com.shengdong.CircleB">-->
+    <!--<constructor-arg index="0" ref="circleC"/>-->
+    <!--</bean>-->
+    <!--<bean id="circleC" class="com.shengdong.CircleC">-->
+    <!--<constructor-arg index="0" ref="circleA"/>-->
+    <!--</bean>-->
+
+</beans>
